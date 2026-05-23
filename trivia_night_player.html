@@ -5,16 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trivia Night — Player</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&family=Inter:wght@400;500;600&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #0a0a12; --surface: #13131f; --surface2: #1c1c2e; --border: rgba(255,255,255,0.08);
-    --accent: #7c6af7; --accent2: #f7c26a; --green: #3dd68c; --red: #f26b6b;
-    --text: #f0eeff; --muted: #8884aa;
-    --font-head: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+    --bg: #0a0a0a; --surface: #141414; --surface2: #1f1f1f; --border: rgba(255,255,255,0.15);
+    --accent: #e02424; --accent2: #ff5252; --green: #3dd68c; --red: #e02424;
+    --text: #ffffff; --muted: #9a9a9a;
+    --font-head: 'Nunito', sans-serif; --font-body: 'Inter', sans-serif;
   }
   body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 32px 28px; width: 100%; max-width: 480px; }
+  .game-wrapper { display: flex; align-items: flex-start; gap: 28px; width: 100%; max-width: 780px; justify-content: center; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 36px 32px; width: 100%; max-width: 560px; flex: 1; min-width: 0; }
   .logo { font-family: var(--font-head); font-size: 18px; font-weight: 800; text-align: center; margin-bottom: 28px; }
   .logo span { color: var(--accent); }
 
@@ -30,12 +31,12 @@
     width: 100%; padding: 16px; border-radius: 10px; border: none; background: var(--accent); color: white;
     font-family: var(--font-head); font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.15s; letter-spacing: 0.5px;
   }
-  .btn-join:hover { background: #6b5be0; transform: translateY(-1px); }
+  .btn-join:hover { background: #b81c1c; transform: translateY(-1px); }
   .btn-join:active { transform: translateY(0); }
   .btn-join:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
   .waiting-anim { text-align: center; padding: 20px; }
-  .pulse-ring { width: 72px; height: 72px; border-radius: 50%; background: rgba(124,106,247,0.2); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; animation: pulse 2s ease-in-out infinite; }
+  .pulse-ring { width: 72px; height: 72px; border-radius: 50%; background: rgba(224,36,36,0.2); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; animation: pulse 2s ease-in-out infinite; }
   @keyframes pulse { 0%,100% { transform: scale(1); opacity:1; } 50% { transform: scale(1.08); opacity:0.7; } }
   .pulse-inner { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); }
 
@@ -50,10 +51,10 @@
     background: var(--surface2); color: var(--text); font-family: var(--font-body); font-size: 14px; font-weight: 500;
     cursor: pointer; transition: all 0.15s; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center;
   }
-  .opt-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(124,106,247,0.1); transform: translateY(-2px); }
+  .opt-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(224,36,36,0.1); transform: translateY(-2px); }
   .opt-btn:active:not(:disabled) { transform: translateY(0); }
   .opt-btn:disabled { cursor: default; }
-  .opt-btn.selected { border-color: var(--accent); background: rgba(124,106,247,0.18); }
+  .opt-btn.selected { border-color: var(--accent); background: rgba(224,36,36,0.18); }
   .opt-btn.correct { border-color: var(--green); background: rgba(61,214,140,0.12); color: var(--green); }
   .opt-btn.wrong { border-color: var(--red); background: rgba(242,107,107,0.1); color: var(--red); opacity: 0.7; }
   .opt-letter { font-size: 12px; font-weight: 800; width: 26px; height: 26px; border-radius: 6px; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; }
@@ -69,9 +70,12 @@
   .result-banner.timeout-r { background: rgba(247,194,106,0.1); border: 1px solid rgba(247,194,106,0.3); color: var(--accent2); }
 
   .lb-list { display: flex; flex-direction: column; gap: 6px; margin-top: 16px; }
-  .lb-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--surface2); border-radius: 8px; border: 1px solid var(--border); }
-  .lb-row.me { border-color: rgba(124,106,247,0.4); background: rgba(124,106,247,0.08); }
-  .lb-rank { font-family: var(--font-head); font-size: 13px; font-weight: 800; color: var(--muted); min-width: 22px; }
+  .lb-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.08); border-radius: 8px; border: 1px solid var(--border); }
+  .lb-row.me { border-color: rgba(224,36,36,0.4); background: rgba(224,36,36,0.08); }
+  .lb-row.rank-1 { border-color: rgba(255,215,0,0.5); background: rgba(255,215,0,0.1); }
+  .lb-row.rank-2 { border-color: rgba(192,192,192,0.5); background: rgba(192,192,192,0.08); }
+  .lb-row.rank-3 { border-color: rgba(205,127,50,0.5); background: rgba(205,127,50,0.08); }
+  .lb-rank { font-family: var(--font-head); font-size: 14px; font-weight: 800; color: var(--muted); min-width: 22px; }
   .lb-name { flex: 1; font-size: 14px; }
   .lb-score { font-family: var(--font-head); font-size: 16px; font-weight: 800; color: var(--accent); }
 
@@ -85,17 +89,260 @@
   .gameover-card h2 { font-size: 28px; margin-bottom: 8px; }
   .final-score { font-family: var(--font-head); font-size: 48px; font-weight: 800; color: var(--accent); margin: 16px 0 4px; }
   .final-label { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+
+  /* ── Dim mode ── */
+  html[data-theme="dim"] { --bg:#252525; --surface:#2f2f2f; --surface2:#383838; --border:rgba(255,255,255,0.12); --text:#e8e8e8; --muted:#888888; }
+
+  /* ── Light mode ── */
+  html[data-theme="light"] { --bg:#f0f0f0; --surface:#ffffff; --surface2:#e8e8e8; --border:rgba(0,0,0,0.12); --text:#111111; --muted:#555555; }
+  html[data-theme="light"] .opt-letter { background: rgba(0,0,0,0.07); }
+  html[data-theme="light"] .lb-row { background: rgba(0,0,0,0.04); }
+  html[data-theme="light"] input[type="text"] { background: var(--surface2); }
+  #theme-toggle { background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 16px; padding: 4px 10px; cursor: pointer; line-height: 1; transition: border-color 0.2s; }
+  #theme-toggle:hover { border-color: var(--accent); }
+
+  /* ── Monster sidebar ── */
+  .monster-sidebar {
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    flex-shrink: 0; width: 160px; padding-top: 16px; position: relative;
+    background: var(--surface); border: 1px solid rgba(224,36,36,0.35);
+    border-radius: 4px; padding: 16px 12px;
+  }
+  .monster-svg {
+    image-rendering: pixelated; image-rendering: crisp-edges;
+    animation: monster-float 2.4s steps(4, end) infinite;
+    filter: drop-shadow(0 4px 0 #001a3d);
+  }
+  @keyframes monster-float {
+    0%,100% { transform: translateY(0px); }
+    25%     { transform: translateY(-6px); }
+    50%     { transform: translateY(-8px); }
+    75%     { transform: translateY(-4px); }
+  }
+  @keyframes monster-nom {
+    0%   { transform: translateY(0px); }
+    20%  { transform: translateY(-10px); }
+    40%  { transform: translateY(-12px); }
+    60%  { transform: translateY(-6px); }
+    80%  { transform: translateY(-2px); }
+    100% { transform: translateY(0px); }
+  }
+  .monster-svg.eating { animation: monster-nom 0.4s steps(5, end) forwards; }
+  .snack-counter {
+    font-family: var(--font-head); font-size: 12px; font-weight: 800;
+    color: var(--accent); background: rgba(224,36,36,0.08); border: 2px solid rgba(224,36,36,0.4);
+    padding: 3px 12px; letter-spacing: 1px; text-transform: uppercase;
+    image-rendering: pixelated;
+  }
+  .feed-btn {
+    background: var(--accent); border: none; color: #ffffff;
+    font-family: var(--font-head); font-size: 12px; font-weight: 800;
+    padding: 8px 16px; cursor: pointer; letter-spacing: 1px; text-transform: uppercase;
+    box-shadow: 0 4px 0 #7a0f0f, inset 0 2px 0 rgba(255,255,255,0.2);
+    transition: none; image-rendering: pixelated;
+  }
+  .feed-btn:hover  { background: #ff3333; }
+  .feed-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #7a0f0f, inset 0 2px 0 rgba(255,255,255,0.2); }
+  .monster-label { font-size: 10px; color: var(--accent); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+  .pellet {
+    position: absolute; width: 8px; height: 8px; border-radius: 0;
+    background: var(--accent); pointer-events: none; image-rendering: pixelated;
+    animation: pellet-fly 0.38s linear forwards;
+  }
+  @keyframes pellet-fly {
+    0%   { transform: translate(var(--x0), var(--y0)); opacity: 1; }
+    85%  { opacity: 1; }
+    100% { transform: translate(var(--x1), var(--y1)); opacity: 0; }
+  }
+  @media (max-width: 720px) {
+    .game-wrapper { flex-direction: column; align-items: center; }
+    .monster-sidebar {
+      flex-direction: row; width: 100%; max-width: 560px;
+      padding: 16px 20px; padding-top: 16px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 18px;
+      justify-content: center; gap: 20px;
+    }
+    .monster-svg { width: 100px; height: 89px; }
+  }
+
+  /* ── Feedback Widget ── */
+  .fb-btn {
+    position: fixed; bottom: 20px; right: 20px; z-index: 890;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--muted); font-family: var(--font-body); font-size: 13px; font-weight: 600;
+    padding: 8px 16px; border-radius: 99px; cursor: pointer;
+    box-shadow: 0 2px 14px rgba(0,0,0,0.4); transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .fb-btn:hover { border-color: var(--accent); color: var(--text); transform: translateY(-1px); }
+  .fb-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45); backdrop-filter: blur(2px); z-index: 1000;
+  }
+  .fb-backdrop.open { display: block; }
+  .fb-panel {
+    display: none; position: fixed; bottom: 72px; right: 20px;
+    width: 310px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 22px; z-index: 1001;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  }
+  .fb-panel.open { display: block; }
+  .fb-head {
+    font-family: var(--font-head); font-size: 16px; font-weight: 800;
+    margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .fb-close-x {
+    background: none; border: none; color: var(--muted); font-size: 18px;
+    cursor: pointer; padding: 0 2px; line-height: 1; transition: color 0.15s;
+  }
+  .fb-close-x:hover { color: var(--text); }
+  .fb-label { font-size: 12px; color: var(--muted); font-weight: 500; display: block; margin-bottom: 5px; }
+  .fb-finput, .fb-textarea {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-family: var(--font-body);
+    font-size: 14px; padding: 9px 12px; outline: none;
+    transition: border-color 0.15s; margin-bottom: 12px;
+  }
+  .fb-finput:focus, .fb-textarea:focus { border-color: var(--accent); }
+  .fb-textarea { resize: none; }
+  .fb-row { display: flex; gap: 8px; }
+  .fb-submit {
+    flex: 1; padding: 9px 0; border-radius: 8px; border: none;
+    background: var(--accent); color: #fff; font-family: var(--font-body);
+    font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s;
+  }
+  .fb-submit:hover { background: #b81c1c; }
+  .fb-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+  .fb-cancel-btn {
+    padding: 9px 14px; border-radius: 8px; border: 1px solid var(--border);
+    background: none; color: var(--muted); font-family: var(--font-body);
+    font-size: 14px; cursor: pointer; transition: all 0.15s;
+  }
+  .fb-cancel-btn:hover { color: var(--text); border-color: var(--text); }
+  .fb-thanks {
+    text-align: center; line-height: 1.6; font-size: 13px; color: var(--muted);
+  }
+  .fb-thanks strong { color: var(--text); font-size: 15px; display: block; margin-bottom: 10px; }
+  .fb-thanks a { color: var(--accent2); text-decoration: none; }
+  .fb-thanks a:hover { text-decoration: underline; }
+  @media (max-width: 380px) {
+    .fb-panel { right: 10px; left: 10px; width: auto; }
+  }
+
+  /* ─── Chat widget ──────────────────────────────────────────────────────── */
+  .chat-toggle {
+    position: fixed; bottom: 16px; left: 16px; z-index: 1000;
+    background: var(--accent); color: #fff; border: none; border-radius: 20px;
+    padding: 8px 14px; cursor: pointer; font-size: 14px; font-family: var(--font-body);
+    display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .chat-badge {
+    background: #fff; color: var(--accent); border-radius: 50%;
+    font-size: 11px; font-weight: 800; padding: 1px 6px; display: none;
+  }
+  .chat-badge.visible { display: inline; }
+  .chat-panel {
+    position: fixed; bottom: 60px; left: 16px; width: 300px; height: 350px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    display: flex; flex-direction: column; z-index: 999;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  }
+  .chat-panel.hidden { display: none; }
+  .chat-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 12px; border-bottom: 1px solid var(--border);
+    font-weight: 700; font-size: 13px; letter-spacing: 0.5px; color: var(--text);
+  }
+  .chat-close {
+    background: none; border: none; cursor: pointer; color: var(--muted);
+    font-size: 18px; line-height: 1; padding: 0 2px;
+  }
+  .chat-close:hover { color: var(--text); }
+  .chat-messages {
+    flex: 1; overflow-y: auto; padding: 8px 12px;
+    display: flex; flex-direction: column; gap: 4px;
+    scrollbar-width: thin;
+  }
+  .chat-message { font-size: 13px; line-height: 1.45; word-break: break-word; color: var(--text); }
+  .chat-name { font-weight: 700; color: var(--accent2); }
+  .chat-input-row {
+    display: flex; border-top: 1px solid var(--border);
+    padding: 7px 8px; gap: 6px;
+  }
+  .chat-input {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 7px 10px; color: var(--text);
+    font-family: var(--font-body); font-size: 13px; outline: none;
+  }
+  .chat-input:focus { border-color: var(--accent); }
+  .chat-send {
+    background: var(--accent); color: #fff; border: none; border-radius: 8px;
+    padding: 7px 12px; cursor: pointer; font-size: 13px; font-family: var(--font-body);
+    font-weight: 600; white-space: nowrap;
+  }
+  .chat-send:hover { opacity: 0.85; }
+  @media (max-width: 499px) {
+    .chat-panel { width: 100vw; left: 0; border-radius: 12px 12px 0 0; bottom: 56px; }
+  }
 </style>
 </head>
 <body>
+<div class="game-wrapper">
 <div class="card">
-  <div class="logo">Trivia<span>Night</span></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
+    <div class="logo" style="margin-bottom:0;">Trivia<span>Night</span></div>
+    <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀️</button>
+  </div>
+
+  <!-- REJOIN SCREEN -->
+  <div class="screen" id="screen-rejoin">
+    <h2>Welcome back!</h2>
+    <div class="sub">Found your previous session</div>
+    <div style="font-family:var(--font-head);font-size:26px;font-weight:800;margin:20px 0;color:var(--accent2);" id="rejoin-name"></div>
+    <button class="btn-join" onclick="doRejoin()">Rejoin as this player →</button>
+    <button onclick="rejoinAsNew()" style="background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;margin-top:16px;display:block;width:100%;text-align:center;">Join as a different player</button>
+  </div>
+
+  <!-- KICKED SCREEN -->
+  <div class="screen" id="screen-kicked">
+    <div style="text-align:center;">
+      <div style="font-size:48px;margin-bottom:16px;">👋</div>
+      <h2>You've been removed</h2>
+      <div class="sub">The host has removed you from this game. You're welcome to rejoin if you'd like.</div>
+      <button class="btn-join" onclick="location.reload()" style="margin-top:24px;">Rejoin game →</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-banned">
+    <div style="text-align:center;">
+      <div style="font-size:48px;margin-bottom:16px;">🚫</div>
+      <h2>You've been banned</h2>
+      <div class="sub">The host has banned you from this game session. You are unable to rejoin.</div>
+    </div>
+  </div>
+
+  <!-- CODE ENTRY SCREEN -->
+  <div class="screen" id="screen-code">
+    <h2>Join a Game</h2>
+    <div class="sub">Enter the 6-letter code from your host</div>
+    <input type="text" id="code-input" placeholder="XXXXXX" maxlength="8" autocomplete="off"
+      style="text-align:center;letter-spacing:6px;text-transform:uppercase;font-size:26px;font-family:var(--font-head);font-weight:800;"
+      onkeydown="if(event.key==='Enter')enterCode()">
+    <div id="code-error" style="color:#f26b6b;font-size:13px;margin-top:6px;min-height:18px;"></div>
+    <button class="btn-join" onclick="enterCode()">Continue →</button>
+  </div>
 
   <!-- JOIN SCREEN -->
-  <div class="screen active" id="screen-join">
+  <div class="screen" id="screen-join">
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text);min-height:24px;" id="join-game-name"></div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:6px;margin-bottom:4px;">Game Code</div>
+      <div style="font-family:var(--font-head);font-size:22px;font-weight:800;letter-spacing:5px;color:var(--accent2);" id="join-code-display"></div>
+    </div>
     <h2>Join the Game</h2>
     <div class="sub">Enter your name to play</div>
     <input type="text" id="name-input" placeholder="Your name..." maxlength="24" autocomplete="off">
+    <div id="name-error" style="color:#f26b6b;font-size:13px;margin-top:6px;min-height:18px;"></div>
     <button class="btn-join" onclick="joinGame()" id="join-btn">Join →</button>
   </div>
 
@@ -103,6 +350,7 @@
   <div class="screen" id="screen-waiting">
     <div class="waiting-anim">
       <div class="pulse-ring"><div class="pulse-inner"></div></div>
+      <div style="font-size:13px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;min-height:18px;" id="wait-game-name"></div>
       <h2>You're In!</h2>
       <p class="sub" style="margin-bottom:0;">Waiting for the host to start the game...</p>
       <p style="margin-top:16px;color:var(--accent);font-family:var(--font-head);font-size:18px;font-weight:700;" id="wait-name"></p>
@@ -149,6 +397,10 @@
       <span class="score-label">Your Score</span>
       <span class="score-val" id="p-score3">0</span>
     </div>
+    <div style="margin-top:20px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Leaderboard</div>
+      <div class="lb-list" id="rv-lb"></div>
+    </div>
   </div>
 
   <!-- GAMEOVER SCREEN -->
@@ -162,12 +414,205 @@
   </div>
 </div>
 
+<!-- ── Monster sidebar ──────────────────────────────────────────────────── -->
+<div class="monster-sidebar">
+  <!-- 18×16 chibi water sprite — 32-bit style, smaller ears, no blush -->
+  <svg class="monster-svg" viewBox="0 0 108 96" xmlns="http://www.w3.org/2000/svg" width="140" height="124">
+    <!-- Row 0: head top outline -->
+    <rect x="24" y="0"  width="60" height="6" fill="#003d7a"/>
+    <!-- Row 1: specular highlight (bright top) -->
+    <rect x="24" y="6"  width="6"  height="6" fill="#003d7a"/>
+    <rect x="30" y="6"  width="12" height="6" fill="#55bbff"/>
+    <rect x="42" y="6"  width="24" height="6" fill="#cceeff"/>
+    <rect x="66" y="6"  width="12" height="6" fill="#55bbff"/>
+    <rect x="78" y="6"  width="6"  height="6" fill="#003d7a"/>
+    <!-- Row 2: mid highlight, wider head -->
+    <rect x="18" y="12" width="6"  height="6" fill="#003d7a"/>
+    <rect x="24" y="12" width="6"  height="6" fill="#55bbff"/>
+    <rect x="30" y="12" width="12" height="6" fill="#aaddff"/>
+    <rect x="42" y="12" width="24" height="6" fill="#55bbff"/>
+    <rect x="66" y="12" width="12" height="6" fill="#aaddff"/>
+    <rect x="78" y="12" width="6"  height="6" fill="#55bbff"/>
+    <rect x="84" y="12" width="6"  height="6" fill="#003d7a"/>
+    <!-- Row 3: narrow fin tips (1px wide each side) -->
+    <rect x="12" y="18" width="6"  height="6" fill="#003d7a"/>
+    <rect x="18" y="18" width="6"  height="6" fill="#44aaee"/>
+    <rect x="24" y="18" width="6"  height="6" fill="#003d7a"/>
+    <rect x="30" y="18" width="54" height="6" fill="#55bbff"/>
+    <rect x="84" y="18" width="6"  height="6" fill="#003d7a"/>
+    <rect x="90" y="18" width="6"  height="6" fill="#44aaee"/>
+    <rect x="96" y="18" width="6"  height="6" fill="#003d7a"/>
+    <!-- Row 4: 2px fin ears (shaded) + eyes top 3px white -->
+    <rect x="6"  y="24" width="6"  height="6" fill="#003d7a"/>
+    <rect x="12" y="24" width="6"  height="6" fill="#3388cc"/>
+    <rect x="18" y="24" width="6"  height="6" fill="#44aaee"/>
+    <rect x="24" y="24" width="6"  height="6" fill="#003d7a"/>
+    <rect x="30" y="24" width="6"  height="6" fill="#55bbff"/>
+    <rect x="36" y="24" width="18" height="6" fill="#ffffff"/>
+    <rect x="54" y="24" width="12" height="6" fill="#55bbff"/>
+    <rect x="66" y="24" width="18" height="6" fill="#ffffff"/>
+    <rect x="84" y="24" width="6"  height="6" fill="#003d7a"/>
+    <rect x="90" y="24" width="6"  height="6" fill="#44aaee"/>
+    <rect x="96" y="24" width="6"  height="6" fill="#3388cc"/>
+    <rect x="102" y="24" width="6" height="6" fill="#003d7a"/>
+    <!-- Row 5: 2px fin ears (shaded) + eyes iris -->
+    <rect x="6"  y="30" width="6"  height="6" fill="#003d7a"/>
+    <rect x="12" y="30" width="6"  height="6" fill="#3388cc"/>
+    <rect x="18" y="30" width="6"  height="6" fill="#44aaee"/>
+    <rect x="24" y="30" width="6"  height="6" fill="#003d7a"/>
+    <rect x="30" y="30" width="6"  height="6" fill="#55bbff"/>
+    <rect x="36" y="30" width="6"  height="6" fill="#ffffff"/>
+    <rect x="42" y="30" width="12" height="6" fill="#2299ee"/>
+    <rect x="54" y="30" width="12" height="6" fill="#55bbff"/>
+    <rect x="66" y="30" width="6"  height="6" fill="#ffffff"/>
+    <rect x="72" y="30" width="12" height="6" fill="#2299ee"/>
+    <rect x="84" y="30" width="6"  height="6" fill="#003d7a"/>
+    <rect x="90" y="30" width="6"  height="6" fill="#44aaee"/>
+    <rect x="96" y="30" width="6"  height="6" fill="#3388cc"/>
+    <rect x="102" y="30" width="6" height="6" fill="#003d7a"/>
+    <!-- Row 6: 2px fin ears (shaded) + eyes pupil -->
+    <rect x="6"  y="36" width="6"  height="6" fill="#003d7a"/>
+    <rect x="12" y="36" width="6"  height="6" fill="#3388cc"/>
+    <rect x="18" y="36" width="6"  height="6" fill="#44aaee"/>
+    <rect x="24" y="36" width="6"  height="6" fill="#003d7a"/>
+    <rect x="30" y="36" width="6"  height="6" fill="#55bbff"/>
+    <rect x="36" y="36" width="6"  height="6" fill="#ffffff"/>
+    <rect x="42" y="36" width="6"  height="6" fill="#2299ee"/>
+    <rect x="48" y="36" width="6"  height="6" fill="#111111"/>
+    <rect x="54" y="36" width="12" height="6" fill="#55bbff"/>
+    <rect x="66" y="36" width="6"  height="6" fill="#ffffff"/>
+    <rect x="72" y="36" width="6"  height="6" fill="#2299ee"/>
+    <rect x="78" y="36" width="6"  height="6" fill="#111111"/>
+    <rect x="84" y="36" width="6"  height="6" fill="#003d7a"/>
+    <rect x="90" y="36" width="6"  height="6" fill="#44aaee"/>
+    <rect x="96" y="36" width="6"  height="6" fill="#3388cc"/>
+    <rect x="102" y="36" width="6" height="6" fill="#003d7a"/>
+    <!-- Row 7: fins end, head widens -->
+    <rect x="18" y="42" width="6"  height="6" fill="#003d7a"/>
+    <rect x="24" y="42" width="60" height="6" fill="#55bbff"/>
+    <rect x="84" y="42" width="6"  height="6" fill="#003d7a"/>
+    <!-- Row 8: mid face (no blush) -->
+    <rect x="18" y="48" width="6"  height="6" fill="#003d7a"/>
+    <rect x="24" y="48" width="60" height="6" fill="#55bbff"/>
+    <rect x="84" y="48" width="6"  height="6" fill="#003d7a"/>
+    <!-- Row 9: lower face, shadow starts on sides -->
+    <rect x="18" y="54" width="6"  height="6" fill="#003d7a"/>
+    <rect x="24" y="54" width="6"  height="6" fill="#1a88cc"/>
+    <rect x="30" y="54" width="48" height="6" fill="#55bbff"/>
+    <rect x="78" y="54" width="6"  height="6" fill="#1a88cc"/>
+    <rect x="84" y="54" width="6"  height="6" fill="#003d7a"/>
+    <!-- Rows 10-11: mouth normal (U smile: corners x=36/x=72, arc x=42-x=60) -->
+    <g class="mouth-normal">
+      <rect x="18" y="60" width="6"  height="6" fill="#003d7a"/>
+      <rect x="24" y="60" width="12" height="6" fill="#55bbff"/>
+      <rect x="36" y="60" width="6"  height="6" fill="#003d7a"/>
+      <rect x="42" y="60" width="30" height="6" fill="#55bbff"/>
+      <rect x="72" y="60" width="6"  height="6" fill="#003d7a"/>
+      <rect x="78" y="60" width="6"  height="6" fill="#55bbff"/>
+      <rect x="84" y="60" width="6"  height="6" fill="#003d7a"/>
+      <rect x="18" y="66" width="6"  height="6" fill="#003d7a"/>
+      <rect x="24" y="66" width="18" height="6" fill="#55bbff"/>
+      <rect x="42" y="66" width="24" height="6" fill="#003d7a"/>
+      <rect x="66" y="66" width="18" height="6" fill="#55bbff"/>
+      <rect x="84" y="66" width="6"  height="6" fill="#003d7a"/>
+    </g>
+    <!-- Rows 10-11: mouth nom (rectangular open: bracket at x=36/x=72, black x=42-x=66) -->
+    <g class="mouth-nom" style="display:none">
+      <rect x="18" y="60" width="6"  height="6" fill="#003d7a"/>
+      <rect x="24" y="60" width="12" height="6" fill="#55bbff"/>
+      <rect x="36" y="60" width="6"  height="6" fill="#003d7a"/>
+      <rect x="42" y="60" width="30" height="6" fill="#000000"/>
+      <rect x="72" y="60" width="6"  height="6" fill="#003d7a"/>
+      <rect x="78" y="60" width="6"  height="6" fill="#55bbff"/>
+      <rect x="84" y="60" width="6"  height="6" fill="#003d7a"/>
+      <rect x="18" y="66" width="6"  height="6" fill="#003d7a"/>
+      <rect x="24" y="66" width="12" height="6" fill="#55bbff"/>
+      <rect x="36" y="66" width="6"  height="6" fill="#003d7a"/>
+      <rect x="42" y="66" width="30" height="6" fill="#000000"/>
+      <rect x="72" y="66" width="6"  height="6" fill="#003d7a"/>
+      <rect x="78" y="66" width="6"  height="6" fill="#55bbff"/>
+      <rect x="84" y="66" width="6"  height="6" fill="#003d7a"/>
+    </g>
+    <!-- Row 12: chin, shadow on sides -->
+    <rect x="24" y="72" width="6"  height="6" fill="#003d7a"/>
+    <rect x="30" y="72" width="6"  height="6" fill="#1a88cc"/>
+    <rect x="36" y="72" width="36" height="6" fill="#55bbff"/>
+    <rect x="72" y="72" width="6"  height="6" fill="#1a88cc"/>
+    <rect x="78" y="72" width="6"  height="6" fill="#55bbff"/>
+    <rect x="84" y="72" width="6"  height="6" fill="#003d7a"/>
+    <!-- Row 13: body (shadow tone) -->
+    <rect x="30" y="78" width="12" height="6" fill="#003d7a"/>
+    <rect x="42" y="78" width="24" height="6" fill="#1a88cc"/>
+    <rect x="66" y="78" width="12" height="6" fill="#003d7a"/>
+    <!-- Row 14: feet (shadow tone) -->
+    <rect x="36" y="84" width="6"  height="6" fill="#003d7a"/>
+    <rect x="42" y="84" width="6"  height="6" fill="#1a88cc"/>
+    <rect x="48" y="84" width="6"  height="6" fill="#003d7a"/>
+    <rect x="60" y="84" width="6"  height="6" fill="#003d7a"/>
+    <rect x="66" y="84" width="6"  height="6" fill="#1a88cc"/>
+    <rect x="72" y="84" width="6"  height="6" fill="#003d7a"/>
+    <!-- Row 15: feet base -->
+    <rect x="36" y="90" width="12" height="6" fill="#003d7a"/>
+    <rect x="60" y="90" width="12" height="6" fill="#003d7a"/>
+    <!-- Invisible mouth target for pellet homing -->
+    <rect id="mouth-target" x="36" y="57" width="36" height="18" fill="transparent"/>
+  </svg>
+  <div class="snack-counter">🍪 <span id="snack-count">0</span></div>
+  <button class="feed-btn" onclick="feedMonster()">Feed me!</button>
+</div>
+</div><!-- end .game-wrapper -->
+
+<!-- Feedback Widget -->
+<button class="fb-btn" onclick="fbOpen()" title="Send feedback">💬 Feedback</button>
+<div class="fb-backdrop" id="fb-backdrop" onclick="fbClose()"></div>
+<div class="fb-panel" id="fb-panel">
+  <div id="fb-form">
+    <div class="fb-head">
+      Send Feedback
+      <button class="fb-close-x" onclick="fbClose()" aria-label="Close">✕</button>
+    </div>
+    <label class="fb-label" for="fb-who">Name or Slack handle <span style="font-weight:400;">(optional)</span></label>
+    <input class="fb-finput" type="text" id="fb-who" placeholder="@yourname" autocomplete="off" style="text-align:left;">
+    <label class="fb-label" for="fb-msg">Feedback <span style="color:var(--accent);">*</span></label>
+    <textarea class="fb-textarea" id="fb-msg" rows="4" placeholder="What's on your mind?"></textarea>
+    <div id="fb-error" style="display:none;color:#f26b6b;font-size:12px;margin-bottom:10px;"></div>
+    <div class="fb-row">
+      <button class="fb-cancel-btn" onclick="fbClose()">Cancel</button>
+      <button class="fb-submit" id="fb-send" onclick="fbSubmit()">Send ✈</button>
+    </div>
+  </div>
+  <div id="fb-thanks" style="display:none;">
+    <div class="fb-thanks">
+      <strong>Thank you for your feedback!</strong>
+      If you want to connect with me directly on this project, feel free to reach out to me on Slack <strong>@kswike</strong> or via email <a href="mailto:ksweikert@gmail.com">ksweikert@gmail.com</a>.
+    </div>
+    <div style="margin-top:16px;">
+      <button class="fb-cancel-btn" style="width:100%;text-align:center;" onclick="fbClose()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
-// ─── Storage keys (must match host exactly) ───────────────────────────────────
-const STORAGE_KEY_GAME      = 'trivia-game-state';
-const STORAGE_KEY_QUESTIONS = 'trivia-questions';
-const STORAGE_KEY_RESPONSES = 'trivia-responses';
-const STORAGE_KEY_PLAYERS   = 'trivia-players';
+// ─── Firebase config — must match the host file exactly ──────────────────────
+const firebaseConfig = {
+  apiKey:            "AIzaSyDJ28_e0fMgwZJ7NahQx7gt8_iX2VO2rns",
+  authDomain:        "trivia-127b9.firebaseapp.com",
+  databaseURL:       "https://trivia-127b9-default-rtdb.firebaseio.com",
+  projectId:         "trivia-127b9",
+  storageBucket:     "trivia-127b9.firebasestorage.app",
+  messagingSenderId: "534126219859",
+  appId:             "1:534126219859:web:adb61b3728e25c7d112ca6"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ─── Game code — read from URL ?code=XXXXXX, or prompt player to enter one ───
+let gameCode = new URLSearchParams(location.search).get('code') || null;
+// Shorthand for game-scoped Firebase refs (set after code is known)
+function gref(path) { return db.ref('games/' + gameCode + '/' + path); }
 
 let myId        = null;
 let myName      = '';
@@ -175,25 +620,9 @@ let myScore     = 0;
 let myAnswers   = {};
 let currentQIdx = -1;
 let gameStatus  = 'waiting';
-let pollInterval  = null;
 let timerInterval = null;
 let questions   = [];
 const LETTERS   = ['A','B','C','D'];
-
-// ─── localStorage helpers ─────────────────────────────────────────────────────
-function lsGet(key) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : null; } catch(e) { return null; } }
-function lsSet(key, data) { try { localStorage.setItem(key, JSON.stringify(data)); } catch(e) {} }
-
-// BroadcastChannel for real-time sync across same-origin tabs
-let bc;
-try {
-  bc = new BroadcastChannel('trivia-sync');
-  bc.onmessage = e => { if (e.data?.key) lsSet(e.data.key, e.data.data); };
-} catch(e) {}
-function broadcastUpdate(key, data) { try { bc && bc.postMessage({ key, data }); } catch(e) {} }
-
-async function saveToStorage(key, data) { lsSet(key, data); broadcastUpdate(key, data); }
-async function loadFromStorage(key)     { return lsGet(key); }
 
 // ─── UI helpers ───────────────────────────────────────────────────────────────
 function showScreen(id) {
@@ -203,37 +632,121 @@ function showScreen(id) {
 
 function uid() { return Math.random().toString(36).slice(2) + Date.now().toString(36); }
 
+// ─── Code entry ───────────────────────────────────────────────────────────────
+function enterCode() {
+  const val = document.getElementById('code-input').value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (val.length < 4) {
+    document.getElementById('code-error').textContent = 'Please enter a valid game code.';
+    return;
+  }
+  gameCode = val;
+  document.getElementById('join-code-display').textContent = gameCode;
+  showScreen('screen-join');
+}
+
 // ─── Join ─────────────────────────────────────────────────────────────────────
 async function joinGame() {
   const name = document.getElementById('name-input').value.trim();
   if (!name) { document.getElementById('name-input').focus(); return; }
-  myName = name;
-  myId   = uid();
+
   document.getElementById('join-btn').disabled = true;
 
-  const players = (await loadFromStorage(STORAGE_KEY_PLAYERS)) || {};
-  players[myId] = { name: myName, score: 0 };
-  await saveToStorage(STORAGE_KEY_PLAYERS, players);
+  const snap = await gref('players').get();
+  const existing = snap.val() || {};
+  if (Object.keys(existing).length >= 100) {
+    document.getElementById('join-btn').disabled = false;
+    document.getElementById('name-error').textContent = 'This game is full (100 player limit). Contact ksweikert@gmail.com for larger events.';
+    return;
+  }
+  const taken = Object.values(existing).some(p => p.name?.toLowerCase() === name.toLowerCase());
+  if (taken) {
+    document.getElementById('join-btn').disabled = false;
+    document.getElementById('name-input').focus();
+    document.getElementById('name-error').textContent = 'That name is already taken — choose another.';
+    return;
+  }
+  // Check if this name has been banned from this session
+  const bannedSnap = await gref('bannedPlayers').get();
+  const bannedList = bannedSnap.val() || {};
+  const isBanned = Object.values(bannedList).some(b => b.name?.toLowerCase() === name.toLowerCase());
+  if (isBanned) {
+    document.getElementById('join-btn').disabled = false;
+    document.getElementById('name-error').textContent = 'You have been banned from this game session.';
+    return;
+  }
+  document.getElementById('name-error').textContent = '';
+
+  myName = name;
+  myId   = uid();
+
+  await gref('players/' + myId).set({ name: myName, score: 0 });
+
+  // Remove player and their responses from Firebase when tab closes
+  gref('players/' + myId).onDisconnect().remove();
+  gref('responses/' + myId).onDisconnect().remove();
+
+  // Save session for potential rejoin
+  sessionStorage.setItem('trivia_session', JSON.stringify({ gameCode, myId, myName, myScore: 0 }));
 
   document.getElementById('wait-name').textContent = myName;
   showScreen('screen-waiting');
-  pollInterval = setInterval(pollGameState, 1500);
+
+  attachGameListeners();
 }
 
-// ─── Poll loop ────────────────────────────────────────────────────────────────
-async function pollGameState() {
-  const state = await loadFromStorage(STORAGE_KEY_GAME);
-  const qs    = await loadFromStorage(STORAGE_KEY_QUESTIONS);
-  if (!state) return;
-  if (qs) questions = qs;
+function attachGameListeners() {
+  initChat();
+  gref('questions').on('value', snap => {
+    const qs = snap.val();
+    if (qs) questions = Array.isArray(qs) ? qs : Object.values(qs);
+  });
 
-  // Refresh my score from authoritative player record
-  const players = await loadFromStorage(STORAGE_KEY_PLAYERS);
-  if (players && players[myId]) myScore = players[myId].score || myScore;
+  gref('players/' + myId + '/score').on('value', snap => {
+    const score = snap.val();
+    if (score !== null && score !== undefined) {
+      myScore = score;
+      try {
+        const sess = JSON.parse(sessionStorage.getItem('trivia_session') || '{}');
+        if (sess.myId === myId) { sess.myScore = score; sessionStorage.setItem('trivia_session', JSON.stringify(sess)); }
+      } catch(_) {}
+    }
+  });
+
+  gref('gameState').on('value', snap => {
+    const state = snap.val();
+    if (state) onGameStateChange(state);
+  });
+
+  // Kick / ban detection
+  gref('players/' + myId).on('value', async snap => {
+    if (myId && snap.val() === null && gameStatus !== 'gameover' && gameStatus !== 'waiting') {
+      sessionStorage.removeItem('trivia_session');
+      clearInterval(timerInterval);
+      const bannedSnap = await gref('bannedPlayers/' + myId).get();
+      showScreen(bannedSnap.val() ? 'screen-banned' : 'screen-kicked');
+    }
+  });
+
+  // Game name display
+  gref('name').on('value', snap => {
+    const name = snap.val() || '';
+    const wEl = document.getElementById('wait-game-name');
+    const jEl = document.getElementById('join-game-name');
+    if (wEl) wEl.textContent = name;
+    if (jEl) jEl.textContent = name;
+  });
+}
+
+// ─── Game state handler ───────────────────────────────────────────────────────
+function onGameStateChange(state) {
+  if (state.status === 'waiting' && gameStatus === 'gameover') {
+    resetToJoin();
+    return;
+  }
 
   if (state.status === 'gameover' && gameStatus !== 'gameover') {
     gameStatus = 'gameover';
-    showGameOver(players || {});
+    gref('players').get().then(snap => showGameOver(snap.val() || {}));
     return;
   }
 
@@ -300,11 +813,8 @@ async function submitAnswer(qi, oi) {
   btns.forEach((b, i) => { b.disabled = true; if (i === oi) b.classList.add('selected'); });
   clearInterval(timerInterval);
 
-  // Write response to shared storage
-  const responses = (await loadFromStorage(STORAGE_KEY_RESPONSES)) || {};
-  if (!responses[myId]) responses[myId] = {};
-  responses[myId]['q' + qi] = oi;
-  await saveToStorage(STORAGE_KEY_RESPONSES, responses);
+  // Atomic write to player-isolated Firebase path — no race condition with other players
+  await gref('responses/' + myId + '/q' + qi).set(oi);
 
   gameStatus = 'answered';
   document.getElementById('p-score2').textContent = myScore.toLocaleString();
@@ -346,12 +856,32 @@ function showReveal(qi, state) {
   } else {
     banner.innerHTML = `<div class="result-banner wrong-r">✗ The correct answer was: ${LETTERS[correct]}: ${q.options[correct]}</div>`;
   }
+
+  // Fetch and render leaderboard
+  gref('players').get().then(snap => {
+    const players = snap.val() || {};
+    const sorted = Object.entries(players)
+      .map(([id, p]) => ({ id, name: p.name || id.slice(0, 8), score: p.score || 0 }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 10);
+    const lb = document.getElementById('rv-lb');
+    lb.innerHTML = '';
+    sorted.forEach((p, i) => {
+      const row = document.createElement('div');
+      const medals = ['🥇','🥈','🥉'];
+      row.className = 'lb-row' + (i < 3 ? ` rank-${i+1}` : '') + (p.id === myId ? ' me' : '');
+      row.innerHTML = `<span class="lb-rank">${i < 3 ? medals[i] : i + 1}</span><span class="lb-name">${p.name}${p.id === myId ? ' (you)' : ''}</span><span class="lb-score">${p.score.toLocaleString()}</span>`;
+      lb.appendChild(row);
+    });
+  });
 }
 
 // ─── Game over screen ─────────────────────────────────────────────────────────
-async function showGameOver(players) {
-  clearInterval(pollInterval);
+function showGameOver(players) {
+  gref('questions').off();
+  gref('players/' + myId + '/score').off();
   clearInterval(timerInterval);
+  // gameState listener stays alive so we detect when host resets
   showScreen('screen-gameover');
   document.getElementById('final-score').textContent = myScore.toLocaleString();
 
@@ -370,8 +900,294 @@ async function showGameOver(players) {
   });
 }
 
+// ─── Reset to join screen (triggered when host resets after game over) ────────
+function resetToJoin() {
+  gref('gameState').off();
+  clearInterval(timerInterval);
+  sessionStorage.removeItem('trivia_session');
+  myId = null; myName = ''; myScore = 0; myAnswers = {};
+  currentQIdx = -1; gameStatus = 'waiting'; questions = [];
+  document.getElementById('name-input').value = '';
+  document.getElementById('name-error').textContent = '';
+  document.getElementById('join-btn').disabled = false;
+  showScreen('screen-join');
+}
+
+// ─── Theme (player-local, independent of host preference) ────────────────────
+function applyTheme() {
+  const t = localStorage.getItem('trivia_player_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  document.getElementById('theme-toggle').textContent = t === 'dark' ? '🌙' : t === 'dim' ? '🌓' : '☀️';
+  document.getElementById('theme-toggle').title = t === 'dark' ? 'Dark mode' : t === 'dim' ? 'Dim mode' : 'Light mode';
+}
+function toggleTheme() {
+  const cycle = { dark: 'dim', dim: 'light', light: 'dark' };
+  const next = cycle[localStorage.getItem('trivia_player_theme') || 'dark'];
+  localStorage.setItem('trivia_player_theme', next);
+  applyTheme();
+}
+applyTheme();
+
+// ─── Monster ──────────────────────────────────────────────────────────────────
+let snackCount = 0;
+function feedMonster() {
+  snackCount++;
+  document.getElementById('snack-count').textContent = snackCount;
+
+  const sidebar  = document.querySelector('.monster-sidebar');
+  const btn      = document.querySelector('.feed-btn');
+  const mouth    = document.getElementById('mouth-target');
+  const sRect    = sidebar.getBoundingClientRect();
+  const bRect    = btn.getBoundingClientRect();
+  const mRect    = mouth.getBoundingClientRect();
+
+  // Start at button centre, end at mouth centre (both relative to sidebar)
+  const x0 = bRect.left  + bRect.width  / 2 - sRect.left;
+  const y0 = bRect.top   + bRect.height / 2 - sRect.top;
+  const x1 = mRect.left  + mRect.width  / 2 - sRect.left;
+  const y1 = mRect.top   + mRect.height / 2 - sRect.top;
+
+  const pellet = document.createElement('div');
+  pellet.className = 'pellet';
+  // Position at origin (0,0) of sidebar; translate via CSS vars
+  pellet.style.left = '0';
+  pellet.style.top  = '0';
+  pellet.style.setProperty('--x0', x0 + 'px');
+  pellet.style.setProperty('--y0', y0 + 'px');
+  pellet.style.setProperty('--x1', x1 + 'px');
+  pellet.style.setProperty('--y1', y1 + 'px');
+  sidebar.appendChild(pellet);
+  pellet.addEventListener('animationend', () => pellet.remove());
+
+  // Trigger open/close mouth cycle when pellet lands
+  setTimeout(() => {
+    const svg     = document.querySelector('.monster-svg');
+    const mNormal = svg.querySelector('.mouth-normal');
+    const mNom    = svg.querySelector('.mouth-nom');
+    svg.classList.remove('eating'); void svg.offsetWidth; svg.classList.add('eating');
+    // open → close → open → close cycle (140ms per frame)
+    [true, false, true, false].forEach((open, i) => {
+      setTimeout(() => {
+        mNormal.style.display = open ? 'none' : '';
+        mNom.style.display    = open ? 'inline' : 'none';
+      }, i * 140);
+    });
+    setTimeout(() => {
+      svg.classList.remove('eating');
+      mNormal.style.display = '';
+      mNom.style.display    = 'none';
+    }, 4 * 140);
+  }, 300);
+}
+
+// ─── Rejoin support ───────────────────────────────────────────────────────────
+let savedSession = null;
+
+async function checkRejoin() {
+  try {
+    const raw = sessionStorage.getItem('trivia_session');
+    if (!raw) return false;
+    const sess = JSON.parse(raw);
+    if (!sess.myId || !sess.gameCode) return false;
+    if (gameCode && sess.gameCode !== gameCode) return false;
+    if (!gameCode) gameCode = sess.gameCode;
+    // Check if this player was banned
+    const bannedSnap = await gref('bannedPlayers/' + sess.myId).get();
+    if (bannedSnap.val()) {
+      sessionStorage.removeItem('trivia_session');
+      showScreen('screen-banned');
+      return 'banned';
+    }
+    const stateSnap = await gref('gameState').get();
+    const state = stateSnap.val();
+    if (!state || state.status === 'gameover') return false;
+    savedSession = sess;
+    return true;
+  } catch(_) { return false; }
+}
+
+async function doRejoin() {
+  if (!savedSession) return;
+  myId   = savedSession.myId;
+  myName = savedSession.myName;
+
+  // Re-add to Firebase in case onDisconnect removed them
+  const existing = await gref('players/' + myId).get();
+  if (!existing.val()) {
+    await gref('players/' + myId).set({ name: myName, score: savedSession.myScore || 0 });
+  }
+  gref('players/' + myId).onDisconnect().remove();
+  gref('responses/' + myId).onDisconnect().remove();
+
+  document.getElementById('wait-name').textContent = myName;
+  showScreen('screen-waiting');
+  attachGameListeners();
+}
+
+function rejoinAsNew() {
+  sessionStorage.removeItem('trivia_session');
+  savedSession = null;
+  document.getElementById('join-code-display').textContent = gameCode;
+  showScreen('screen-join');
+}
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 document.getElementById('name-input').addEventListener('keydown', e => { if (e.key === 'Enter') joinGame(); });
+
+checkRejoin().then(canRejoin => {
+  if (canRejoin === 'banned') return; // banned screen already shown
+  if (canRejoin) {
+    document.getElementById('rejoin-name').textContent = savedSession.myName;
+    document.getElementById('join-code-display').textContent = gameCode;
+    showScreen('screen-rejoin');
+  } else if (gameCode) {
+    document.getElementById('join-code-display').textContent = gameCode;
+    showScreen('screen-join');
+  } else {
+    showScreen('screen-code');
+  }
+  // Start listening for game name once code is known
+  if (gameCode) {
+    gref('name').on('value', snap => {
+      const name = snap.val() || '';
+      const jEl = document.getElementById('join-game-name');
+      if (jEl) jEl.textContent = name;
+    });
+  }
+});
+
+// ─── Feedback Widget ──────────────────────────────────────────────────────────
+// Setup: go to formspree.io, sign up with ksweikert@gmail.com, create a form,
+// then replace YOUR_FORM_ID below with the ID from your form's endpoint URL.
+const FB_URL     = 'https://formspree.io/f/mzdyznqg';
+const FB_SUBJECT = 'TRIVIA-PLAYER-FEEDBACK';
+
+function fbOpen() {
+  document.getElementById('fb-backdrop').classList.add('open');
+  document.getElementById('fb-panel').classList.add('open');
+  document.getElementById('fb-form').style.display = '';
+  document.getElementById('fb-thanks').style.display = 'none';
+  document.getElementById('fb-who').value = '';
+  document.getElementById('fb-msg').value = '';
+}
+function fbClose() {
+  document.getElementById('fb-backdrop').classList.remove('open');
+  document.getElementById('fb-panel').classList.remove('open');
+}
+async function fbSubmit() {
+  const msg = document.getElementById('fb-msg').value.trim();
+  if (!msg) { document.getElementById('fb-msg').focus(); return; }
+  const who = document.getElementById('fb-who').value.trim();
+  const btn = document.getElementById('fb-send');
+  const err = document.getElementById('fb-error');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  err.style.display = 'none';
+  try {
+    const res = await fetch(FB_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ _subject: FB_SUBJECT, name: who || '(anonymous)', feedback: msg })
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || `HTTP ${res.status}`);
+    }
+  } catch (e) {
+    err.textContent = 'Could not send feedback: ' + e.message;
+    err.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Send ✈';
+    return;
+  }
+  document.getElementById('fb-form').style.display = 'none';
+  document.getElementById('fb-thanks').style.display = '';
+  btn.disabled = false; btn.textContent = 'Send ✈';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') fbClose(); });
+
+// ─── Chat ──────────────────────────────────────────────────────────────────
+let chatOpen = false;
+let chatUnread = 0;
+let chatInitialized = false;
+let chatAtBottom = true;
+
+function getChatName() {
+  return myName || 'Player';
+}
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  document.getElementById('chat-panel').classList.toggle('hidden', !chatOpen);
+  if (chatOpen) {
+    chatUnread = 0;
+    updateChatBadge();
+    const msgs = document.getElementById('chat-messages');
+    msgs.scrollTop = msgs.scrollHeight;
+    const inp = document.getElementById('chat-input');
+    if (inp) inp.focus();
+  }
+}
+
+function updateChatBadge() {
+  const badge = document.getElementById('chat-badge');
+  badge.textContent = chatUnread;
+  badge.classList.toggle('visible', chatUnread > 0);
+}
+
+function sendChat() {
+  if (!gameCode) return;
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  gref('chat').push({ name: getChatName(), text, ts: Date.now() });
+  input.value = '';
+  input.focus();
+}
+
+function escChatHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function initChat() {
+  if (chatInitialized) return;
+  chatInitialized = true;
+
+  const msgs = document.getElementById('chat-messages');
+  msgs.addEventListener('scroll', () => {
+    chatAtBottom = msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight < 30;
+  });
+
+  const chatStartTs = Date.now();
+  gref('chat').limitToLast(50).on('child_added', snap => {
+    const val = snap.val();
+    if (!val || typeof val.text !== 'string') return;
+    const { name = 'Player', text, ts = Date.now() } = val;
+    const div = document.createElement('div');
+    div.className = 'chat-message';
+    const t = new Date(ts);
+    div.title = String(t.getHours()).padStart(2,'0') + ':' + String(t.getMinutes()).padStart(2,'0');
+    div.innerHTML = '<span class="chat-name">' + escChatHtml(name) + ':</span> ' + escChatHtml(text);
+    msgs.appendChild(div);
+    while (msgs.children.length > 50) msgs.removeChild(msgs.firstChild);
+    if (chatAtBottom) msgs.scrollTop = msgs.scrollHeight;
+    if (!chatOpen && ts > chatStartTs) { chatUnread++; updateChatBadge(); }
+  });
+}
 </script>
+  <!-- ─── Chat widget ─────────────────────────────────────────────────────── -->
+  <button class="chat-toggle" id="chat-toggle-btn" onclick="toggleChat()">
+    💬 Chat <span class="chat-badge" id="chat-badge"></span>
+  </button>
+  <div class="chat-panel hidden" id="chat-panel">
+    <div class="chat-header">
+      <span>Chat</span>
+      <button class="chat-close" onclick="toggleChat()" title="Close chat">×</button>
+    </div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-input-row">
+      <input class="chat-input" id="chat-input" type="text" placeholder="Message…" maxlength="300"
+        onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="chat-send" onclick="sendChat()">Send</button>
+    </div>
+  </div>
 </body>
 </html>
